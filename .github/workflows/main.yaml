@@ -1,0 +1,49 @@
+name: Build and Deploy to AKS
+
+env:
+  kubernetesVersion: '1.25.6'
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_NEW }}
+
+      - name: Build and push Docker image
+        env:
+          ACR_NAME: ${{ secrets.ACR_ENDPOINT }}
+        run: |
+          docker build -t $ACR_NAME/flask-new:${{ github.sha }} .
+          docker login $ACR_NAME -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD_SECRET }}
+          docker push $ACR_NAME/flask-new:${{ github.sha }}
+      - name: Set AKS context
+        id: set-context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: dd-prac-pvt
+          cluster-name: '${{ secrets.AKS_CLUSTER_NAME }}'
+      - name: Setup kubectl
+        id: install-kubectl
+        uses: azure/setup-kubectl@v3
+      - name: 'Run az commands'
+        shell: pwsh
+        run: |                      
+          az account set --subscription 0af70dac-a1c3-49b9-913e-41d1d2168474
+          az aks get-credentials --resource-group dd-prac-pvt --name dd-kube-pvt
+          az aks command invoke --resource-group dd-prac-pvt --name dd-kube-pvt --command "kubectl get ns"
+          git clone https://${{ secrets.tokennew }}@github.com/mg-1705/tushar-flask-new.git
+          az aks command invoke --resource-group dd-prac-pvt --name dd-kube-pvt --command "kubectl apply -f aks.yaml" --file "tushar-flask-new/aks.yaml"
+          az aks command invoke --resource-group dd-prac-pvt --name dd-kube-pvt --command "kubectl get ns"
+          sleep 40
+          az aks command invoke --resource-group dd-prac-pvt --name dd-kube-pvt --command "kubectl get all -n flask"
