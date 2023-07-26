@@ -43,6 +43,7 @@ jobs:
           az aks get-credentials --resource-group dd-prac-pvt --name dd-kube-pvt
           az aks command invoke --resource-group dd-prac-pvt --name dd-kube-pvt --command "kubectl get ns"
           git clone https://${{ secrets.tokennew }}@github.com/mg-1705/tushar-flask-new.git
+          az aks update -n dd-kube-pvt -g dd-prac-pvt --attach-acr pubcontpracdd
           az aks command invoke --resource-group dd-prac-pvt --name dd-kube-pvt --command "kubectl apply -f aks.yaml" --file "tushar-flask-new/aks.yaml"
           az aks command invoke --resource-group dd-prac-pvt --name dd-kube-pvt --command "kubectl get ns"
           sleep 40
