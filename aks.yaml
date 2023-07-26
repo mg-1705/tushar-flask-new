@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: flaskdockerrepo
-        image: githubactionacrprac.azurecr.io/flask-new:v6
+        image: githubactionacrprac.azurecr.io/flask-new:v7
         ports:
         - containerPort: 5000
 
