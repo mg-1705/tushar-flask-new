@@ -8,14 +8,16 @@ app = Flask(__name__)
 def index():
     account_name = "discoverdollarstorage"
     private_endpoint = "discoverdollarstorage.privatelink.blob.core.windows.net"
-    blob_service_client = BlobServiceClient(account_url=f"https://{account_name}.blob.core.privateendpoint.net", credential=None, endpoint_suffix=private_endpoint)
+    blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName=discoverdollarstorage;AccountKey=AHN5nmtkkskh7qAK6FH+CbTQJZGram73/9lttw+g1HoX66dMq9lKLo6r+tHRGFKYGcaz4XcFFVDz+AStsAFQIw==;EndpointSuffix=core.windows.net")
     containers = blob_service_client.list_containers()
+    name="ferer"
     for container in containers:
-        print(container.name)
+        name="madhur"
+        name = container.name
 
 
-    Hostname = "mysql-discover-dollar-pvt.mysql-discover-dollar-pvt.mysql.database.azure.com"
-    DB_Name = "mysql-discover-dollar-pvt"
+    Hostname = "mysql-discover-dollar-pvt.mysql.database.azure.com"
+    DB_Name = "test"
     Username = "adminvm"
     Password ="Mandelbulb@1234"
     conn = mysql.connector.connect(user = Username,
@@ -24,7 +26,7 @@ def index():
                               password = Password)
 
     if conn.is_connected():
-        return('Connection established successfully.', container.name)
+        return(f'Connection established successfully. {name} ')
     else :
-        return("Connection not established successfully.", container.name)
+        return(f'Connection not established successfully {name} ')
      
