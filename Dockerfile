@@ -12,4 +12,4 @@ COPY . /home/site/wwwroot
 
 WORKDIR /home/site/wwwroot
 
-CMD ["python3","app.py"]
+CMD ["flask","run"]
